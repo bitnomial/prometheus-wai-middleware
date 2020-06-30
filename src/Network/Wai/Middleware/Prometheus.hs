@@ -41,13 +41,14 @@ countStatusCode :: ApplicationMetrics -> Int -> IO ()
 countStatusCode ms s = mapM_ inc . Map.lookup s $ statusCodeMetrics ms
 
 
--- | Add a request duration observation
+-- | Add a request duration observation in ms
 observeDuration :: ApplicationMetrics -> Double -> IO ()
 observeDuration ms i = observe i $ durationMetrics ms
 
 
--- | Set up the metrics for HTTP response codes.  Use labels to identify your particular application.  The label
--- @http_response_code@ is reserved.
+-- | Set up the metrics for HTTP response codes and request handling durations.  We identify the response code counters
+-- by @http_requests_total@ with codes labeled by @http_response_code@.  We identify the duration histogram by
+-- @http_request_duration_milliseconds@ Use labels to identify your particular application.
 applicationMetrics :: MonadIO m => Labels -> RegistryT m ApplicationMetrics
 applicationMetrics ls =
     ApplicationMetrics . fromList <$> traverse codeCounter codes <*> hist
@@ -65,7 +66,7 @@ applicationMetrics ls =
     durationBounds = [1 .. 20] <> [30, 40 .. 200] <> [300, 400 .. 900] <> [1000, 2000 .. 10000]
 
 
--- | This middleware adds response code tracking for the application, aggregating across all requests
+-- | This middleware adds response code tracking and request duration statistics for the application, aggregating across all requests
 instrumentApplication :: ApplicationMetrics -> Middleware
 instrumentApplication ms app req respond = do
     t0 <- getTime Monotonic
