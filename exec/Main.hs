@@ -10,7 +10,7 @@ import           Network.Wai                                    (pathInfo,
                                                                  responseLBS)
 import           Network.Wai.Handler.Warp                       (run)
 import           System.Metrics.Prometheus.Concurrent.RegistryT (runRegistryT)
-import           System.Metrics.Prometheus.Http.Scrape          (serveHttpTextMetricsT)
+import           System.Metrics.Prometheus.Http.Scrape          (serveMetricsT)
 import           System.Metrics.Prometheus.MetricId             (fromList)
 
 import           Network.Wai.Middleware.Prometheus              (applicationMetrics,
@@ -22,8 +22,8 @@ main = runRegistryT $ do
     ms <- applicationMetrics $ fromList [("app", "example_server")]
     let webserver = run 8080 . instrumentApplication ms $ \req respond ->
             respond (makeResponse req)
-    liftIO $ async webserver
-    serveHttpTextMetricsT 8081 []
+    _ <- liftIO $ async webserver
+    serveMetricsT 8081 []
   where
     success = responseLBS status200 [] "ok"
     failure = responseLBS status404 [] mempty

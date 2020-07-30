@@ -1,6 +1,6 @@
 cabal-version:       2.2
 name:                prometheus-wai-middleware
-version:             1.0.0.0
+version:             1.0.1.0
 synopsis:            Instrument a wai application with various metrics
 description:         See https://github.com/bitnomial/prometheus-wai-middleware/tree/master/readme.md
 bug-reports:         https://github.com/bitnomial/prometheus-wai-middleware/issues
@@ -23,11 +23,11 @@ library
   exposed-modules:
     Network.Wai.Middleware.Prometheus
   build-depends:
-      base        >= 4.12  && < 4.14
+      base        >= 4.12  && < 5
     , containers  >= 0.5   && < 0.7
     , clock      ^>= 0.8
     , http-types  >= 0.8   && < 0.13
-    , prometheus ^>= 2.1.3
+    , prometheus ^>= 2.2
     , text       ^>= 1.2
     , wai        ^>= 3.2
 
@@ -38,9 +38,9 @@ executable prometheus-wai-middleware-example
   main-is:          Main.hs
   build-depends:
       async                     ^>= 2.2
-    , base                       >= 4.12  && < 4.14
+    , base                       >= 4.12  && < 5
     , http-types                 >= 0.8   && < 0.13
-    , prometheus                ^>= 2.1.3
+    , prometheus                ^>= 2.2
     , prometheus-wai-middleware
     , wai                       ^>= 3.2
     , warp                       >= 3.2   && < 3.5
