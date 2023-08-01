@@ -28,7 +28,7 @@ library
     , clock      ^>= 0.8
     , http-types  >= 0.8   && < 0.13
     , prometheus ^>= 2.2
-    , text       ^>= 1.2
+    , text        >= 1.2   && < 2.1
     , wai        ^>= 3.2
 
 
