@@ -12,6 +12,7 @@ copyright:           2020 Bitnomial, Inc.
 category:            Web
 build-type:          Simple
 extra-source-files:  CHANGELOG.md
+                   , README.md
 
 source-repository head
   type:     git
