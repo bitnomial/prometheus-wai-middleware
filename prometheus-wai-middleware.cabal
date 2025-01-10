@@ -31,11 +31,11 @@ library
     Network.Wai.Middleware.Prometheus
   build-depends:
       base        >= 4.12  && < 5
-    , containers  >= 0.5   && < 0.7
+    , containers  >= 0.5   && < 0.8
     , clock      ^>= 0.8
     , http-types  >= 0.8   && < 0.13
-    , prometheus ^>= 2.2
-    , text        >= 1.2   && < 2.1
+    , prometheus ^>= 2.3
+    , text        >= 1.2   && < 2.2
     , wai        ^>= 3.2
 
 
@@ -47,7 +47,7 @@ executable prometheus-wai-middleware-example
       async                     ^>= 2.2
     , base                       >= 4.12  && < 5
     , http-types                 >= 0.8   && < 0.13
-    , prometheus                ^>= 2.2
+    , prometheus                ^>= 2.3
     , prometheus-wai-middleware
     , wai                       ^>= 3.2
     , warp                       >= 3.2   && < 3.5
