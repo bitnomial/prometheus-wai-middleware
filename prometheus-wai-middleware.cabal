@@ -30,13 +30,14 @@ library
   exposed-modules:
     Network.Wai.Middleware.Prometheus
   build-depends:
-      base        >= 4.12  && < 5
-    , containers  >= 0.5   && < 0.8
-    , clock      ^>= 0.8
-    , http-types  >= 0.8   && < 0.13
-    , prometheus ^>= 2.3
-    , text        >= 1.2   && < 2.2
-    , wai        ^>= 3.2
+      base              >= 4.12  && < 5
+    , case-insensitive ^>= 1.2
+    , containers        >= 0.5   && < 0.8
+    , clock            ^>= 0.8
+    , http-types        >= 0.8   && < 0.13
+    , prometheus       ^>= 2.3
+    , text              >= 1.2   && < 2.2
+    , wai              ^>= 3.2
 
 
 executable prometheus-wai-middleware-example

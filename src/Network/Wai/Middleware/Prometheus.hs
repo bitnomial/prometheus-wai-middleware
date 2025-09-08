@@ -9,12 +9,16 @@ module Network.Wai.Middleware.Prometheus
     , instrumentApplication
     ) where
 
+import           Control.Monad                                  (unless)
 import           Control.Monad.IO.Class                         (MonadIO)
+import qualified Data.CaseInsensitive                           as CI
 import           Data.Map.Strict                                (Map, fromList)
 import qualified Data.Map.Strict                                as Map
 import           Data.Text                                      (pack)
 import           Network.HTTP.Types                             (Status (..))
 import           Network.Wai                                    (Middleware,
+                                                                 Request,
+                                                                 requestHeaders,
                                                                  responseStatus)
 import           System.Clock                                   (Clock (Monotonic),
                                                                  TimeSpec (..),
@@ -66,13 +70,34 @@ applicationMetrics ls =
     durationBounds = [1 .. 20] <> [30, 40 .. 200] <> [300, 400 .. 900] <> [1000, 2000 .. 10000]
 
 
+-- | Is this a WebSocket request?  Returns 'True' if it is.
+--
+-- This is taken from "Network.Wai.Handler.WebSockets".
+isWebSocketsReq :: Request -> Bool
+isWebSocketsReq req =
+    fmap CI.mk (lookup "upgrade" $ requestHeaders req) == Just "websocket"
+
+
 -- | This middleware adds response code tracking and request duration statistics for the application, aggregating across all requests
 instrumentApplication :: ApplicationMetrics -> Middleware
 instrumentApplication ms app req respond = do
     t0 <- getTime Monotonic
     app req $ \r -> do
         t1 <- getTime Monotonic
-        countStatusCode ms (statusCode $ responseStatus r)
+        -- We don't want to count WebSocket requests, since they do not have a
+        -- response status code.
+        --
+        -- TODO: As far as I understand, this is not quite correct.  Here, we
+        -- are testing whether a _request_ is a WebSocket request, but a web server
+        -- may send a normal HTTP response to a WebSocket request.  We should be
+        -- testing the _response_ is a WebSocket response.  However, it doesn't
+        -- look like Wai/Warp has a good way to do this easily.
+        --
+        -- You can't easily call responseStatus on this response, because Wai ends
+        -- up using a 5XX status code that has been hard-coded as a fall-back
+        -- response.
+        unless (isWebSocketsReq req) $
+          countStatusCode ms (statusCode $ responseStatus r)
         observeDuration ms $ diffTimeMS t0 t1
         respond r
 
